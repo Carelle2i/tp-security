@@ -82,7 +82,7 @@ builder.Services.Configure<IpRateLimitOptions>(options =>
         {
             Endpoint = "*",
             Period = "10m",
-            Limit = 100 // Limiter à 100 requêtes par période de 10 minutes
+            Limit = 100 
         }
     };
 });
@@ -93,14 +93,14 @@ builder.Services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>(
 builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
 builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 
-// Ajouter la configuration pour ApplicationDbContext
+// Configuration de la base de données et autres services
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Ajout de l'IdentityServer et autres services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
 
 // Ajouter les services de contrôleurs et API
 builder.Services.AddControllers();
@@ -108,9 +108,9 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // Créer les rôles à l'initialisation
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+#pragma warning disable CS4014 
 CreateRolesAndAdminUser(app.Services);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+#pragma warning restore CS4014 
 
 // Utilisation du middleware pour le Rate Limiting
 app.UseIpRateLimiting();
@@ -148,7 +148,7 @@ async Task CreateRolesAndAdminUser(IServiceProvider services)
         {
             UserName = "admin@example.com",
             Email = "admin@example.com",
-            DateOfBirth = DateTime.Now.AddYears(-30) // Exemple de date de naissance
+            DateOfBirth = DateTime.Now.AddYears(-30) 
         };
 
         var createAdmin = await userManager.CreateAsync(adminUser, "Admin123@");
